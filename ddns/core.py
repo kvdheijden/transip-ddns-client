@@ -2,7 +2,6 @@ from ddns.provider import DDNSProvider
 from ddns.utils import graceful_exit
 
 import requests
-import time
 import logging
 import random
 
@@ -53,13 +52,13 @@ def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
     current_ip = ''
 
     with graceful_exit() as g:
-        while not g.triggered:
+        while not g.trigger.is_set():
             try:
                 new_ip = get_external_ip()
             except Exception as ex:
                 logging.exception('Failed to retrieve external IP address', exc_info=(type(ex), ex, ex.__traceback__))
                 logging.info('Retrying in 5 seconds...')
-                time.sleep(5)
+                g.trigger.wait(5)
                 continue
 
             if new_ip != current_ip:
@@ -70,8 +69,10 @@ def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
                 except Exception as ex:
                     logging.exception('Failed to update IP address', exc_info=(type(ex), ex, ex.__traceback__))
                     logging.info('Retrying in 5 seconds...')
-                    time.sleep(5)
+                    g.trigger.wait(5)
                     continue
 
                 logging.info('IP address updated successfully')
                 current_ip = new_ip
+
+            g.trigger.wait(30)
