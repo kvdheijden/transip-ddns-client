@@ -4,6 +4,7 @@ from ddns.utils import graceful_exit
 import requests
 import time
 import logging
+import random
 
 from typing import AnyStr, List, Dict
 
@@ -35,7 +36,14 @@ def validate_dns_entries(dns: List[Dict]) -> None:
 
 
 def get_external_ip() -> AnyStr:
-    return requests.get('https://api.ipify.org/').text
+    return random.choice([
+        lambda: requests.get('https://api.ipify.org/').text.strip(),
+        lambda: requests.get('https://ident.me/').text.strip(),
+        lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
+        lambda: requests.get('http://myip.dnsomatic.com').text.strip(),
+        lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
+        lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
+    ])()
 
 
 def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
