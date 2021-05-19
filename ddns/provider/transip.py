@@ -86,35 +86,36 @@ class TransIPProvider(DDNSProvider):
 
         return json.loads(r.text)['dnsEntries']
 
-    def _add_entry(self, domain: AnyStr, entry: Dict, new_ip: AnyStr) -> None:
-        dns_entry = dict(entry, content=entry['content'] % {'ip': new_ip})
+    def _add_entry(self, domain: AnyStr, entry: Dict) -> None:
         r = self._try_request(requests.post, f'/domains/{domain}/dns', json.dumps({
-            'dnsEntry': dns_entry
+            'dnsEntry': entry
         }))
 
         if r.status_code != 201:
             raise Exception(r.status_code)
 
-        logging.info(f'Added DNS entry {dns_entry}')
+        logging.info(f'Added DNS entry {entry}')
 
-    def _update_entry(self, domain: AnyStr, entry: Dict, new_ip: AnyStr) -> None:
-        dns_entry = dict(entry, content=entry['content'] % {'ip': new_ip})
+    def _update_entry(self, domain: AnyStr, entry: Dict) -> None:
         r = self._try_request(requests.patch, f'/domains/{domain}/dns', json.dumps({
-            'dnsEntry': dns_entry
+            'dnsEntry': entry
         }))
 
         if r.status_code != 204:
             raise Exception(r.status_code)
 
-        logging.info(f'Updated DNS entry {dns_entry}')
+        logging.info(f'Updated DNS entry {entry}')
 
     def update(self, current_ip: AnyStr, new_ip: AnyStr, domain: AnyStr, dns: List[Dict]) -> None:
         current_dns = self._get_dns_entries(domain)
 
         for entry in dns:
-            current_entry = [e for e in current_dns if compare_dns(entry, e)]
+            new_entry = dict(entry, content=entry['content'] % {'ip': new_ip})
+            if new_entry in current_dns:
+                logging.info(f'Skipped already existing entry {new_entry}')
+                continue
 
-            if not len(current_entry):
-                self._add_entry(domain, entry, new_ip)
+            if not len([e for e in current_dns if compare_dns(entry, e)]):
+                self._add_entry(domain, new_entry)
             else:
-                self._update_entry(domain, entry, new_ip)
+                self._update_entry(domain, new_entry)
