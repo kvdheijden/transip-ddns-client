@@ -14,15 +14,16 @@ import logging
 class TransIPProvider(DDNSProvider):
     def __init__(self, login=None, read_only='True', expiration_time='30 minutes', label=None, global_key='False',
                  keyfile=None, test=False, labelfmt='%(label)s-%(nonce)s'):
-        self.login = login
-        self.read_only = str(read_only) != 'False'
-        self.expiration_time = expiration_time
-        self.label = label
-        self.global_key = str(global_key) == 'True'
-        with open(keyfile, 'r') as f:
-            key = f.read()
-            self.__pkey = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, key)
-        self.test = str(test) != 'False'
+        self.test = str(test) == 'True'
+        if not self.test:
+            self.login = login
+            self.read_only = str(read_only) != 'False'
+            self.expiration_time = expiration_time
+            self.label = label
+            self.global_key = str(global_key) == 'True'
+            with open(keyfile, 'r') as f:
+                key = f.read()
+                self.__pkey = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, key)
 
         self.base = 'https://api.transip.nl/v6'
         self._authorization = None

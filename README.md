@@ -3,7 +3,7 @@
 dDNS is a pluggable program which updates DNS entries whenever your public IP address changes.
 Any provider which exposes an API can be used as dynamic DNS provider.
 Current available DNS providers are:
- - TransIP
+ - [x] TransIP
 
 ## Usage
 ```
@@ -31,5 +31,10 @@ method.
 The implementation of the [TransIPProvider](ddns/provider/transip.py#TransIPProvider) can be used as an example
 implementation.
 
+## TODO
+ - [ ] Installation
+ - [ ] Documentation
+ - [ ] Testing
+
 ## License
-See the [LICENSE](LICENSE.md) file for license right and limitations (MIT)
+See the [LICENSE](LICENSE) file for license right and limitations (MIT)
