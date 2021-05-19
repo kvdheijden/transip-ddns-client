@@ -36,14 +36,16 @@ def validate_dns_entries(dns: List[Dict]) -> None:
 
 
 def get_external_ip() -> AnyStr:
-    return random.choice([
-        lambda: requests.get('https://api.ipify.org/').text.strip(),
-        lambda: requests.get('https://ident.me/').text.strip(),
-        lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
-        lambda: requests.get('http://myip.dnsomatic.com').text.strip(),
-        lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
-        lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
-    ])()
+    choices = {
+        'ipify': lambda: requests.get('https://api.ipify.org/').text.strip(),
+        'ident.me': lambda: requests.get('https://ident.me/').text.strip(),
+        'checkip (amazonaws)': lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
+        'wikipedia': lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
+        'ipinfo': lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
+    }
+    key = random.choice(list(choices.keys()))
+    logging.debug(f'Retrieving IP address from {key}')
+    return choices[key]()
 
 
 def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
@@ -73,5 +75,3 @@ def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
 
                 logging.info('IP address updated successfully')
                 current_ip = new_ip
-
-            time.sleep(60)
