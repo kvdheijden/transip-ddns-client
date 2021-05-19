@@ -30,5 +30,4 @@ class graceful_exit(object):
 
 
 def compare_dns(a: Dict, b: Dict):
-    return a['name'] == b['name'] and \
-           a['type'] == b['type']
+    return a['name'] == b['name'] and a['type'] == b['type']
