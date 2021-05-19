@@ -7,6 +7,15 @@ import random
 
 from typing import AnyStr, List, Dict
 
+ip_sources = {
+    'ipify': lambda: requests.get('https://api.ipify.org/').text.strip(),
+    'ident.me': lambda: requests.get('https://ident.me/').text.strip(),
+    'checkip (amazonaws)': lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
+    'wikipedia': lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
+    'ipinfo': lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
+}
+num_ip_sources = len(ip_sources)
+
 
 def validate_dns_entries(dns: List[Dict]) -> None:
     if not isinstance(dns, list):
@@ -34,17 +43,11 @@ def validate_dns_entries(dns: List[Dict]) -> None:
                 raise TypeError(f'DNS entry must have field called \'{key}\'')
 
 
-def get_external_ip() -> AnyStr:
-    choices = {
-        'ipify': lambda: requests.get('https://api.ipify.org/').text.strip(),
-        'ident.me': lambda: requests.get('https://ident.me/').text.strip(),
-        'checkip (amazonaws)': lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
-        'wikipedia': lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
-        'ipinfo': lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
-    }
-    key = random.choice(list(choices.keys()))
+def get_external_ip(i: int = random.randint(0, num_ip_sources)) -> AnyStr:
+    keys = list(ip_sources.keys())
+    key = keys[i]
     logging.debug(f'Retrieving IP address from {key}')
-    return choices[key]()
+    return ip_sources[key]()
 
 
 def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
