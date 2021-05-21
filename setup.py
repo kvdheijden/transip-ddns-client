@@ -20,8 +20,8 @@ setuptools.setup(
     keywords='dynamic dns ddns',
     project_urls={
         'Documentation': 'https://github.com/kvdheijden/dDNS/wiki',
-        'Source': 'https://github.com/kvdheijden/ddns/',
-        'Tracker': 'https://github.com/kvdheijden/ddns/issues',
+        'Source': 'https://github.com/kvdheijden/dDNS/',
+        'Tracker': 'https://github.com/kvdheijden/dDNS/issues',
     },
     packages=setuptools.find_packages(include=['ddns', 'ddns.*']),
     py_modules=[],
