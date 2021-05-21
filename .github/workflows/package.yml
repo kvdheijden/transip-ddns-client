@@ -21,7 +21,7 @@ jobs:
       - name: Version
         id: version
         run: |
-          echo '::set-output name=VERSION::$(python -m ddns --version)'
+          echo ::set-output name=VERSION::$(python -m ddns --version)
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
