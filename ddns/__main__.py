@@ -62,7 +62,7 @@ def run_ddns() -> int:
     parser = argparse.ArgumentParser('python -m ddns', description='Dynamic DNS Client')
     parser.add_argument('--version',
                         action='version',
-                        version=f'dDNS v{__version__}')
+                        version=__version__)
     parser.add_argument('-v',
                         nargs='?',
                         action=Verbosity,
