@@ -63,4 +63,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: kvdheijden/dDNS:latest
+          tags: kvdheijden/ddns:latest
