@@ -19,9 +19,7 @@ setuptools.setup(
     ],
     keywords='dynamic dns ddns',
     project_urls={
-        'Documentation': '',
-        'Funding': '',
-        'Say Thanks!': '',
+        'Documentation': 'https://github.com/kvdheijden/dDNS/wiki',
         'Source': 'https://github.com/kvdheijden/ddns/',
         'Tracker': 'https://github.com/kvdheijden/ddns/issues',
     },
