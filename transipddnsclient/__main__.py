@@ -81,7 +81,7 @@ def transipddnsclient_main() -> int:
     dns = [
         {
             'name': section,
-            'expire': 0,
+            'expire': 1,
             'type': config[section].get('type'),
             'content': config[section].get('content', raw=True),
         }

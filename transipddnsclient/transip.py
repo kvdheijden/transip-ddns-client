@@ -7,7 +7,7 @@ import logging
 from typing import AnyStr, List, Dict, Callable, Optional
 
 
-class TransIPException(object):
+class TransIPException(BaseException):
     def __init__(self, status_code: int, error: AnyStr):
         self.status_code = status_code
         self.error = error
@@ -171,7 +171,7 @@ class TransIPApi(object):
         old_entries = self._get_entries()
 
         for entry in dns:
-            new_entry = dict(entry, content=entry['content'] % {'ip': ip_address})
+            new_entry = dict(entry, content=entry['content'] % {'ip': '.'.join([str(i) for i in ip_address])})
             if new_entry in old_entries:
                 logging.info(f'Skipped already existing entry {new_entry}')
                 continue
