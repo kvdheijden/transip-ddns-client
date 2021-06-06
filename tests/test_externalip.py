@@ -1,5 +1,5 @@
 import pytest
-from transipddnsclient.externalip import RoundRobinRequestsIPSource, WanIPSource
+from transipddnsclient.externalip import RoundRobinRequestsIPSource
 
 
 @pytest.fixture
