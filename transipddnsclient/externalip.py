@@ -3,8 +3,6 @@ import netifaces
 import requests
 from datetime import datetime, timedelta
 from typing import AnyStr, Tuple, Dict
-import math
-import functools
 import warnings
 
 
@@ -48,10 +46,6 @@ class RoundRobinRequestsIPSource(ExternalIPSource):
             },
         }
 
-    def _compare(self, a: AnyStr, b: AnyStr) -> int:
-        sign = functools.partial(math.copysign, 1)
-        return sign(self.ip_sources[a]['last'] < self.ip_sources[b]['last'])
-
     @staticmethod
     def parse_ip(ip: AnyStr) -> Tuple[int, int, int, int]:
         n0, n1, n2, n3 = ip.split('.')
@@ -73,7 +67,7 @@ class RoundRobinRequestsIPSource(ExternalIPSource):
 
     def get(self) -> Tuple[int, int, int, int]:
         now = datetime.now()
-        key = sorted(self.ip_sources.keys(), key=self._compare)[0]
+        key = sorted(self.ip_sources.keys(), key=lambda k: self.ip_sources[k]['last'])[0]
         if self.ip_sources[key]['last'] > now:
             raise ValueError('All IP sources timed out')
 
