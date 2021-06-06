@@ -7,7 +7,6 @@ import argparse
 import configparser
 import logging
 import sys
-import warnings
 
 from typing import Sequence, Text
 
