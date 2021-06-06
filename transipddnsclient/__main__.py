@@ -68,11 +68,8 @@ def transipddnsclient_main() -> int:
     with args.config as f_config:
         config.read_file(f_config)
 
-    # Retrieve main section
-    cfg = config.pop('transipapi')
-
     # Create API instance
-    api = TransIPApi(**cfg)
+    api = TransIPApi(**config['/transipapi'])
 
     # Determine the external IP source
     if args.interface is not None:
@@ -89,6 +86,7 @@ def transipddnsclient_main() -> int:
             'content': config[section].get('content'),
         }
         for section in config.sections()
+        if '/' not in section
     ]
 
     # Execute the transipddnsclient core functionality
