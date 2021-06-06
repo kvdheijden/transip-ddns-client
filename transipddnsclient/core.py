@@ -1,20 +1,9 @@
-from ddns.provider import DDNSProvider
-from ddns.utils import graceful_exit
+from transipddnsclient.transip import TransIPApi
+from transipddnsclient.utils import graceful_exit
+from transipddnsclient.externalip import ExternalIPSource
 
-import requests
 import logging
-import random
-
-from typing import AnyStr, List, Dict
-
-ip_sources = {
-    'ipify': lambda: requests.get('https://api.ipify.org/').text.strip(),
-    'ident.me': lambda: requests.get('https://ident.me/').text.strip(),
-    'checkip (amazonaws)': lambda: requests.get('https://checkip.amazonaws.com').text.strip(),
-    'wikipedia': lambda: requests.get('https://www.wikipedia.org').headers['X-Client-IP'].strip(),
-    'ipinfo': lambda: requests.get('http://ipinfo.io/json').json()['ip'].strip(),
-}
-num_ip_sources = len(ip_sources)
+from typing import List, Dict
 
 
 def validate_dns_entries(dns: List[Dict]) -> None:
@@ -43,21 +32,14 @@ def validate_dns_entries(dns: List[Dict]) -> None:
                 raise TypeError(f'DNS entry must have field called \'{key}\'')
 
 
-def get_external_ip(i: int = random.randint(0, num_ip_sources)) -> AnyStr:
-    keys = list(ip_sources.keys())
-    key = keys[i]
-    logging.debug(f'Retrieving IP address from {key}')
-    return ip_sources[key]()
-
-
-def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
+def transipddnsclient(api: TransIPApi, ext_ip: ExternalIPSource, dns: List[Dict]):
     validate_dns_entries(dns)
     current_ip = ''
 
     with graceful_exit() as g:
         while not g.trigger.is_set():
             try:
-                new_ip = get_external_ip()
+                new_ip = ext_ip.get()
             except Exception as ex:
                 logging.exception('Failed to retrieve external IP address', exc_info=(type(ex), ex, ex.__traceback__))
                 logging.info('Retrying in 5 seconds...')
@@ -68,7 +50,7 @@ def ddns_main(domain: AnyStr, dns: List[Dict], provider: DDNSProvider):
                 logging.info(f'New IP address retrieved: {new_ip}')
 
                 try:
-                    provider.update(current_ip, new_ip, domain, dns)
+                    api.update(new_ip, dns)
                 except Exception as ex:
                     logging.exception('Failed to update IP address', exc_info=(type(ex), ex, ex.__traceback__))
                     logging.info('Retrying in 5 seconds...')

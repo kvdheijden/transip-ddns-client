@@ -1,13 +1,14 @@
-FROM python:3.7-slim
+ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /usr/src/app
-RUN mkdir /usr/src/data
+RUN mkdir /etc/transipddnsclient/
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-VOLUME ["/usr/src/data"]
-ENTRYPOINT ["python", "-m", "ddns"]
+VOLUME ["/etc/transipddnsclient/"]
+ENTRYPOINT ["python", "-m", "transipddnsclient"]
 CMD ["--help"]

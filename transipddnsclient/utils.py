@@ -1,11 +1,10 @@
 import signal
 import threading
-
-from typing import Dict
+from typing import Iterable
 
 
 class graceful_exit(object):
-    def __init__(self, signals=(signal.SIGINT, signal.SIGTERM)):
+    def __init__(self, signals: Iterable = (signal.SIGINT, signal.SIGTERM)):
         self.signum = 0
         self._event = threading.Event()
         self._signals = signals
@@ -27,7 +26,3 @@ class graceful_exit(object):
     @property
     def trigger(self):
         return self._event
-
-
-def compare_dns(a: Dict, b: Dict):
-    return a['name'] == b['name'] and a['type'] == b['type']
