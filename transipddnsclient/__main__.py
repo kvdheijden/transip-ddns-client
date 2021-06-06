@@ -83,7 +83,7 @@ def transipddnsclient_main() -> int:
             'name': section,
             'expire': 0,
             'type': config[section].get('type'),
-            'content': config[section].get('content'),
+            'content': config[section].get('content', raw=True),
         }
         for section in config.sections()
         if '/' not in section
