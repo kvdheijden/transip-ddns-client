@@ -70,4 +70,4 @@ jobs:
           build-args: |
             PYTHON_VERSION=${{ matrix.python-version }}
           push: true
-          tags: kvdheijden/transipddnsclient:${{ steps.version.outputs.VERSION }}-python${{ matrix.python-version }}
+          tags: kvdheijden/transip-ddns-client:${{ steps.version.outputs.VERSION }}-python${{ matrix.python-version }}
