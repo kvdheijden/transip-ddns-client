@@ -7,6 +7,7 @@ import argparse
 import configparser
 import logging
 import sys
+import warnings
 
 from typing import Sequence, Text
 
@@ -52,7 +53,7 @@ def transipddnsclient_main() -> int:
     parser.add_argument('-c', '--config',
                         metavar='CFG',
                         default=cfg_default,
-                        type=argparse.FileType,
+                        type=argparse.FileType('r'),
                         help=f'the configuration file (Default: {cfg_default})')
     parser.add_argument('-i', '--interface',
                         type=str,
