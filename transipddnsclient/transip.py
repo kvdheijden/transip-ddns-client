@@ -57,6 +57,7 @@ class TransIPApi(object):
                 self.__pkey = OpenSSL.crypto.load_privatekey(OpenSSL.crypto.FILETYPE_PEM, key)
 
         self.api = 'https://api.transip.nl/v6'
+        self._authorization = None
 
     @staticmethod
     def compare_dns(a: Dict, b: Dict) -> bool:
